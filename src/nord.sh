@@ -16,8 +16,8 @@ set -e
 append_profile_uuid_to_list() {
   local uuid list
   uuid="$1"
-  list=$(gsettings get "$GSETTINGS_PROFILELIST_PATH" list)
-  gsettings set "$GSETTINGS_PROFILELIST_PATH" list "${list%]*}, '$uuid']"
+  list=$(/usr/bin/gsettings get "$GSETTINGS_PROFILELIST_PATH" list)
+  /usr/bin/gsettings set "$GSETTINGS_PROFILELIST_PATH" list "${list%]*}, '$uuid']"
 }
 
 # Writes the Nord GNOME Terminal theme colors and configurations as dconf key-value pairs to the target profile.
@@ -158,7 +158,7 @@ cleanup() {
 # @since 0.2.0
 clone_default_profile() {
   local uuid
-  uuid="$(gsettings get "$GSETTINGS_PROFILELIST_PATH" default | tr -d \')"
+  uuid="$(/usr/bin/gsettings get "$GSETTINGS_PROFILELIST_PATH" default | tr -d \')"
   profile_uuid="$(uuidgen)"
   dconf dump "$DCONF_PROFILE_BASE_PATH"/:"$uuid"/ | dconf load "$DCONF_PROFILE_BASE_PATH"/:"$profile_uuid"/
   dconf write "$DCONF_PROFILE_BASE_PATH"/:"$profile_uuid"/visible-name "'$NORD_PROFILE_VISIBLE_NAME'"
@@ -185,7 +185,7 @@ get_current_version() {
 # @return none
 # @since 0.2.0
 get_profiles() {
-  profiles=($(gsettings get "$GSETTINGS_PROFILELIST_PATH" list | tr -d "[]\',"))
+  profiles=($(/usr/bin/gsettings get "$GSETTINGS_PROFILELIST_PATH" list | tr -d "[]\',"))
   log 3 "Available profile UUIDs: ${profiles[*]}"
 }
 
